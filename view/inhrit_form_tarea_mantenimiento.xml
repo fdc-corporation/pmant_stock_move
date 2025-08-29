@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    
+
+    <record id="inherit_form_tarea_mantenimiento_stock_move" model="ir.ui.view">
+        <field name="name">tarea.mantenimiento.view.form.inherit</field>
+        <field name="model">tarea.mantenimiento</field>
+        <field name="inherit_id" ref="pmant.Tareav_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='create_ot']" position="after">
+                <field name="grupo_id" invisible="1"/>
+                <field name="state_recepcion" invisible="1"/>
+                <field name="is_confirm_recepcion" invisible="1"/>
+                <button string="Confirmar recepcion" invisible="not is_evaluacion or is_confirm_recepcion" name="action_confirm_recepcion" icon="fa-truck" type="object" class="oe_highlight"/>
+                <button string="Cancelar" invisible="not is_evaluacion or not is_confirm_recepcion or state_recepcion not in ['confirm_recepcion', 'entregado', 'recepcionado']" name="cancel_confirm"  type="object" />
+                <button string="Establecer borrador" invisible="not is_evaluacion or state_recepcion != 'cancelado'" name="restart_confirm"  type="object" />
+
+            </xpath>
+            <xpath expr="//div[@name='button_box']" position="after">
+                <div class="badge rounded-pill text-bg-warning float-end fs-6 border-0" invisible="is_evaluacion == False and is_confirm_recepcion == False or state_recepcion != 'recepcionado'">Recepcionado</div>
+                <div class="badge rounded-pill text-bg-success float-end fs-6 border-0" invisible="is_evaluacion == False and is_confirm_recepcion == False or state_recepcion != 'entregado'">Entregado al Cliente</div>
+                <div class="badge rounded-pill text-bg-danger float-end fs-6 border-0" invisible="is_evaluacion == False and is_confirm_recepcion == False or state_recepcion != 'confirm_recepcion'">Sin recepcionar</div>
+            </xpath>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                    <button invisible="not is_evaluacion and not is_confirm_recepcion" name="action_view_entregas" type="object" class="oe_stat_button" icon="fa-truck">
+                        <field name="len_movimientos" string="Recepcion" widget="statinfo"/>
+                    </button>
+            </xpath>
+        </field>
+    </record>
+
+
+</odoo>

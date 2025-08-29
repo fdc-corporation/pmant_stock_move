@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ubicacion_views.xml -->
+<odoo>
+    <record id="view_conf_pmant_ubicacion_tree" model="ir.ui.view">
+        <field name="name">conf.pmant.ubicacion.tree</field>
+        <field name="model">conf.pmant.ubicacion</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="property_stock_inventory"/>
+                <field name="property_stock_customer"/>
+                <field name="operacion_entrada"/>
+                <field name="operacion_salida"/>
+                <field name="predeterminado"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_conf_pmant_ubicacion_form" model="ir.ui.view">
+        <field name="name">conf.pmant.ubicacion.form</field>
+        <field name="model">conf.pmant.ubicacion</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="property_stock_inventory"/>
+                        <field name="property_stock_customer"/>
+                        <field name="predeterminado"/>
+                        <field name="operacion_entrada"/>
+                        <field name="operacion_salida"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+        <record id="action_conf_pmant_ubicacion" model="ir.actions.act_window">
+        <field name="name">Ubicaciones de Mantenimiento</field>
+        <field name="res_model">conf.pmant.ubicacion</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Crea las ubicaciones de mantenimiento aquí.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_conf_pmant_ubicacion"
+              name="Ubicaciones de Mantenimiento"
+              parent="maintenance.menu_maintenance_configuration"
+              action="action_conf_pmant_ubicacion"
+              sequence="10"/>
+
+</odoo>

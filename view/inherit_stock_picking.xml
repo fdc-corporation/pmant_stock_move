@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="inherit_move_stock_pmant" model="ir.ui.view">
+        <field name="name">stock.picking.view.form.inherit</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                    <button invisible="not tarea_id" name="action_view_tarea" type="object" class="oe_stat_button" icon="fa-file-text-o">
+                        <field name="len_tarea" string="Tarea mantenimiento" widget="statinfo"/>
+                    </button>
+                    <field name="tarea_id" invisible="1"></field>
+                    <field name="len_tarea" invisible="1"></field>
+            </xpath>
+            <xpath expr="//field[@name='group_id']" position="after">
+                <field name="len_tarea" readonly="1"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
