@@ -13,7 +13,7 @@
                     <field name="tarea_id" invisible="1"></field>
                     <field name="len_tarea" invisible="1"></field>
             </xpath>
-            <xpath expr="//field[@name='group_id']" position="after">
+            <xpath expr="//field[@name='sale_id']" position="after">
                 <field name="len_tarea" readonly="1"/>
             </xpath>
         </field>

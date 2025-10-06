@@ -9,7 +9,7 @@
         <field name="inherit_id" ref="pmant.Tareav_form_view"/>
         <field name="arch" type="xml">
             <xpath expr="//button[@name='create_ot']" position="after">
-                <field name="grupo_id" invisible="1"/>
+                <!-- <field name="grupo_id" invisible="1"/> -->
                 <field name="state_recepcion" invisible="1"/>
                 <field name="is_confirm_recepcion" invisible="1"/>
                 <button string="Confirmar recepcion" invisible="not is_evaluacion or is_confirm_recepcion" name="action_confirm_recepcion" icon="fa-truck" type="object" class="oe_highlight"/>

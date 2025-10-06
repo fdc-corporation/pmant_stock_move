@@ -8,11 +8,12 @@ class TareaPamnt (models.Model):
     _description = "Tarea de mantenimiento"
 
 
-    grupo_id = fields.Many2one('procurement.group', string="Grupo de entregas", ondelete="set null",)
+    # grupo_id = fields.Many2one('procurement.group', string="Grupo de entregas", ondelete="set null",)
     len_movimientos = fields.Integer(string="Número de entregas", compute="_compute_len_movimientos", store=False)
     state_recepcion = fields.Selection( [("recepcionado", "Recepcionado"),("confirm_recepcion", "Sin recepcion"),("entregado", "Devuelto al cliente"), ("cancelado", "Cancelado"), ("borrador", "Borrador") ], default="confirm_recepcion", string="Estados de recepción")
     is_confirm_recepcion = fields.Boolean(string="Confirmar recepción", default=False, help="Indica si la recepción de los equipos ha sido confirmada.")
-    
+
+
 
     def create(self, vals):
         res = super(TareaPamnt, self).create(vals)
@@ -24,7 +25,7 @@ class TareaPamnt (models.Model):
         for record in self:
             if record.state_recepcion != "cancelado":
                 record.state_recepcion = "cancelado"
-                movimientos = self.env["stock.picking"].search([("group_id", "=", record.grupo_id.id)])
+                movimientos = self.env["stock.picking"].search([("tarea_id", "=", record.id)])
                 for movimiento in movimientos:
                     if movimiento.state != "done":
                         for equipo in record.planequipo:
@@ -43,16 +44,16 @@ class TareaPamnt (models.Model):
 
     def action_confirm_recepcion(self):
         for record in self:
-            grupo = False
-            if not record.grupo_id :
-                grupo = self.env["procurement.group"].create({
-                    "name": f"{record.name}",
-                    "move_type": "direct",
-                    "partner_id": record.ubicacion.id if record.ubicacion else record.cliente.id,
-                })
-            else :
-                grupo = record.grupo_id
-            record.grupo_id = grupo.id
+            # grupo = False
+            # if not record.grupo_id :
+            #     grupo = self.env["procurement.group"].create({
+            #         "name": f"{record.name}",
+            #         "move_type": "direct",
+            #         "partner_id": record.ubicacion.id if record.ubicacion else record.cliente.id,
+            #     })
+            # else :
+            #     grupo = record.grupo_id
+            # record.grupo_id = grupo.id
             ubicaciones = self.env["conf.pmant.ubicacion"].search([
                 ('id', '!=', self.id),
                 ('predeterminado', '=', True)
@@ -65,7 +66,7 @@ class TareaPamnt (models.Model):
                 # TIPO DE OPERACIÓN
                 "picking_type_id": ubicaciones.operacion_entrada.id if ubicaciones else self.env.ref('stock.picking_type_in').id,
                 "origin": record.name,
-                "group_id": grupo.id,
+                # "group_id": grupo.id,
                 "partner_id": record.ubicacion.id if record.ubicacion else record.cliente.id,
                 "state": "assigned",
                 "tarea_id": record.id,})
@@ -83,28 +84,28 @@ class TareaPamnt (models.Model):
                         "company_id": self.env.company.id,
                     })
                 else : 
-                    raise UserError(_("El número de serie %s ya existe pero está asociado a otro producto.") % (equipo.equipo.serial_no))
+                    serie = serie[0]
                 n_series.append(serie.id)
                 self.env["stock.move"].create({
-                        "name" : f"{equipo.equipo.name} - Modelo: {equipo.equipo.model}" ,
                         "product_id": equipo.equipo.category_id.product_id.id,
+                        "description_picking" : f"{equipo.equipo.name} { '- Modelo:' + equipo.equipo.model if equipo.equipo.model else ''  }",
                         "product_uom_qty": 1,
                         "lot_ids" : [(6, 0, n_series)],
                         "picking_type_id": movimientos.picking_type_id.id,
                         "location_id": movimientos.location_id.id,
                         "location_dest_id": movimientos.location_dest_id.id,
                         "picking_id": movimientos.id,
-                        "group_id": grupo.id,
+                        # "group_id": grupo.id,
                 })
                 record.state_recepcion = "confirm_recepcion"
             record.is_confirm_recepcion = True
 
     def action_view_entregas(self):
         self.ensure_one()
-        if not self.grupo_id:
-            raise UserError(_("No hay grupo de entregas asociado a esta tarea."))
+        # if not self.grupo_id:
+        #     raise UserError(_("No hay grupo de entregas asociado a esta tarea."))
 
-        entregas = self.env["stock.picking"].search([("group_id", "=", self.grupo_id.id)])
+        entregas = self.env["stock.picking"].search([("tarea_id", "=", self.id)])
         if not entregas:
             raise UserError(_("No hay entregas asociadas a este grupo."))
 
@@ -112,15 +113,15 @@ class TareaPamnt (models.Model):
             "name": "Recepcion de equipos",
             "type": "ir.actions.act_window",
             "res_model": "stock.picking",
-            "view_mode": "tree,form",
+            "view_mode": "list,form",
             "domain": [("id", "in", entregas.ids)],
         }
 
 
     def _compute_len_movimientos(self):
         for record in self:
-            if record.grupo_id:
-                movimientos = self.env["stock.picking"].search([("group_id", "=", record.grupo_id.id)])
+            if record.id:
+                movimientos = self.env["stock.picking"].search([("tarea_id", "=", record.id)])
                 record.len_movimientos = len(movimientos)
             else:
                 record.len_movimientos = 0
