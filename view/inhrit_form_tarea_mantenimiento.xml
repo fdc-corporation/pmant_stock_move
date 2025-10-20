@@ -39,22 +39,26 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='name']" position="after">
                 <field name="state_recepcion"></field>
+                <field name="is_evaluacion"></field>
             </xpath>
             <xpath expr="//span[@name='tipo']" position="after">
-                <t t-if="record.state_recepcion.raw_value == 'recepcionado'">
-                    <div class="badge rounded-pill text-bg-warning float-end fs-6 border-0">
-                        Recepcionado
-                    </div>
-                </t>
-                <t t-elif="record.state_recepcion.raw_value == 'entregado'">
-                    <div class="badge rounded-pill text-bg-success float-end fs-6 border-0">
-                        Entregado al Cliente
-                    </div>
-                </t>
-                <t t-else="">
-                    <div class="badge rounded-pill text-bg-danger float-end fs-6 border-0">
-                        Sin recepcionar
-                    </div>
+                <t t-if="record.is_evaluacion.raw_value">
+
+                    <t t-if="record.state_recepcion.raw_value == 'recepcionado'">
+                        <div class="badge rounded-pill text-bg-warning float-end fs-6 border-0">
+                            Recepcionado
+                        </div>
+                    </t>
+                    <t t-elif="record.state_recepcion.raw_value == 'entregado'">
+                        <div class="badge rounded-pill text-bg-success float-end fs-6 border-0">
+                            Entregado al Cliente
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <div class="badge rounded-pill text-bg-danger float-end fs-6 border-0">
+                            Sin recepcionar
+                        </div>
+                    </t>
                 </t>
             </xpath>
         </field>
