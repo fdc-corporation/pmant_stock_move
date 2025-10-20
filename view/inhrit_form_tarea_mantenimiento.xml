@@ -31,4 +31,34 @@
     </record>
 
 
+
+    <record id="inhert_pmant_tarea_kanban" model="ir.ui.view">
+        <field name="name">Tareav.kanban.view.form.inherit</field>
+        <field name="model">tarea.mantenimiento</field>
+        <field name="inherit_id" ref="pmant.Tareav_kanban_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="state_recepcion"></field>
+            </xpath>
+            <xpath expr="//span[@name='tipo']" position="after">
+                <t t-if="record.state_recepcion.raw_value == 'recepcionado'">
+                    <div class="badge rounded-pill text-bg-warning float-end fs-6 border-0">
+                        Recepcionado
+                    </div>
+                </t>
+                <t t-elif="record.state_recepcion.raw_value == 'entregado'">
+                    <div class="badge rounded-pill text-bg-success float-end fs-6 border-0">
+                        Entregado al Cliente
+                    </div>
+                </t>
+                <t t-else="">
+                    <div class="badge rounded-pill text-bg-danger float-end fs-6 border-0">
+                        Sin recepcionar
+                    </div>
+                </t>
+            </xpath>
+        </field>
+    </record>
+
+
 </odoo>

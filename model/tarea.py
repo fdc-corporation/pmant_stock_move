@@ -83,10 +83,11 @@ class TareaPamnt (models.Model):
                         "company_id": self.env.company.id,
                     })
                 else : 
-                    raise UserError(_("El número de serie %s ya existe pero está asociado a otro producto.") % (equipo.equipo.serial_no))
+                    serie = serie[0]
                 n_series.append(serie.id)
                 self.env["stock.move"].create({
                         "name" : f"{equipo.equipo.name} - Modelo: {equipo.equipo.model}" ,
+                        "description_picking" : f"{equipo.equipo.name} { '- Modelo:' + equipo.equipo.model if equipo.equipo.model else ''  }",
                         "product_id": equipo.equipo.category_id.product_id.id,
                         "product_uom_qty": 1,
                         "lot_ids" : [(6, 0, n_series)],
