@@ -61,6 +61,18 @@
                     </t>
                 </t>
             </xpath>
+            <xpath expr="//page[@name='detalle_venta']" position="after">
+                <page name="req_repuestos" string="Requerimientos de repuestos">
+                    <field name="requerimientos_ids">
+                        <list >
+                            <field name="product_id"/>
+                            <field name="nota"/>
+                            <field name="cantidad"/>
+                            <field name="unidad_medida"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
         </field>
     </record>
 

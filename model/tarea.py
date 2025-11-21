@@ -12,7 +12,7 @@ class TareaPamnt (models.Model):
     len_movimientos = fields.Integer(string="Número de entregas", compute="_compute_len_movimientos", store=False)
     state_recepcion = fields.Selection( [("recepcionado", "Recepcionado"),("confirm_recepcion", "Sin recepcion"),("entregado", "Devuelto al cliente"), ("cancelado", "Cancelado"), ("borrador", "Borrador") ], default="confirm_recepcion", string="Estados de recepción")
     is_confirm_recepcion = fields.Boolean(string="Confirmar recepción", default=False, help="Indica si la recepción de los equipos ha sido confirmada.")
-
+    requerimientos_ids = fields.One2many("stock.move", "tarea_id", string="Requerimientos de stock")
 
 
     def create(self, vals):
