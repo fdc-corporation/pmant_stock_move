@@ -12,8 +12,8 @@ class TareaPamnt (models.Model):
     len_movimientos = fields.Integer(string="Número de entregas", compute="_compute_len_movimientos", store=False)
     state_recepcion = fields.Selection( [("recepcionado", "Recepcionado"),("confirm_recepcion", "Sin recepcion"),("entregado", "Devuelto al cliente"), ("cancelado", "Cancelado"), ("borrador", "Borrador") ], default="confirm_recepcion", string="Estados de recepción")
     is_confirm_recepcion = fields.Boolean(string="Confirmar recepción", default=False, help="Indica si la recepción de los equipos ha sido confirmada.")
-    requerimientos_ids = fields.One2many("stock.move", "tarea_id", string="Requerimientos de stock")
-
+    requerimientos_ids = fields.One2many("requerimientos.stock", "tarea_id", string="Requerimientos de stock")
+    is_solicitado = fields.Boolean(string="Repuestos solicitados")
 
     def create(self, vals):
         res = super(TareaPamnt, self).create(vals)
@@ -125,6 +125,28 @@ class TareaPamnt (models.Model):
                 record.len_movimientos = len(movimientos)
             else:
                 record.len_movimientos = 0
+
+
+    def action_solicitar_repuestos(self):
+        for record in self:
+            mensaje = f"Solicitud de repuestos para la tarea {record.name}.\n\n"
+            mensaje += "Se requieren los siguientes repuestos:\n"
+            for req in record.requerimientos_ids:
+                mensaje += f"- {req.product_id.name} (Cantidad: {req.cantidad})\n"
+            grupo = (self.env.ref('pmant.group_pmant_planner', raise_if_not_found=False) or self.env.ref('pmant.group_pmant_admin', raise_if_not_found=False))
+            user = False
+            if grupo:
+                user = self.env['res.users'].sudo().search([('group_ids', 'in', grupo.id), ('share', '=', False)], limit=1)
+            partner = user.partner_id
+            self.message_post(
+                body=mensaje,
+                partner_ids=[partner.id],
+                message_type='notification',
+                subtype_xmlid='mail.mt_note',
+            )
+            self.is_solicitado = True
+
+
 
 
 class Movimientos(models.Model):
