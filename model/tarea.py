@@ -352,7 +352,7 @@ class TareaPamnt(models.Model):
 
             for req in record.requerimientos_ids:
                 if req.cant_consumido > 0:
-                    self.env["stock.scrap"].create({
+                    desecho = self.env["stock.scrap"].create({
                         "product_id": req.product_id.id,
                         "scrap_qty": req.cant_consumido,
                         "location_id": conf.ubicacion_desecho.id,  # Corregido aquí
@@ -360,6 +360,7 @@ class TareaPamnt(models.Model):
                         "tarea_id": record.id,
                         "scrap_reason_tag_ids": [(6, 0, conf.motivo_desecho.ids)],
                     })
+                    desecho.action_validate()
             
             
     def action_view_desecho_repuestos(self):
