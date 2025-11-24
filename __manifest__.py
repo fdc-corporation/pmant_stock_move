@@ -15,6 +15,7 @@
         "view/view_conf_ubicaciones.xml",
         "view/inherit_categorias_productos.xml",
         "view/inherit_stock_picking.xml",
+        "view/wizard_repuestos_consumidos.xml",
     ],
     'support': 'soporte@kauzadigital.pe',
     'application': False,

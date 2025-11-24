@@ -24,11 +24,19 @@
                 <sheet>
                     <group>
                         <field name="name"/>
-                        <field name="property_stock_inventory"/>
-                        <field name="property_stock_customer"/>
-                        <field name="predeterminado"/>
-                        <field name="operacion_entrada"/>
-                        <field name="operacion_salida"/>
+                        <field name="is_trasporte_interno"/>
+                        <field name="property_stock_inventory" invisible="is_trasporte_interno or is_ubicacion_desecho" />
+                        <field name="property_stock_customer" invisible="is_trasporte_interno or is_ubicacion_desecho"/>
+                        <field name="predeterminado" invisible="is_trasporte_interno or is_ubicacion_desecho"/>
+                        <field name="operacion_entrada" invisible="is_trasporte_interno or is_ubicacion_desecho"/>
+                        <field name="operacion_salida" invisible="is_trasporte_interno or is_ubicacion_desecho"/>
+                        <field name="tipo_operacion_traslado" invisible="not is_trasporte_interno"></field>
+                        <field name="ubicacion_origen_traslado" invisible="not is_trasporte_interno"></field>
+                        <field name="ubicacion_destino_traslado" invisible="not is_trasporte_interno"></field>
+                        <field name="is_ubicacion_desecho" invisible=""></field>
+                        <field name="ubicacion_desecho" invisible="not is_ubicacion_desecho"></field>
+                        <field name="motivo_desecho" widget="many2many_tags" invisible="not is_ubicacion_desecho"></field>
+                        <field name="scrap_location_id" invisible="not is_ubicacion_desecho"></field>
                     </group>
                 </sheet>
             </form>
