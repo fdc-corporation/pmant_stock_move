@@ -16,6 +16,7 @@
         "view/inherit_categorias_productos.xml",
         "view/inherit_stock_picking.xml",
         "view/wizard_repuestos_consumidos.xml",
+        "view/inherit_sale_order.xml",
     ],
     'support': 'soporte@kauzadigital.pe',
     'application': False,

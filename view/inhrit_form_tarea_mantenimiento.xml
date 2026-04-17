@@ -70,24 +70,23 @@
         <field name="inherit_id" ref="pmant.Tareav_kanban_view"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='name']" position="after">
-                <field name="state_recepcion"></field>
-                <field name="is_evaluacion"></field>
+                <field name="state_recepcion"/>
+                <field name="is_evaluacion"/>
             </xpath>
-            <xpath expr="//footer" position="after">
+            <xpath expr="//div[contains(@class, 'content_name')]" position="after">
                 <t t-if="record.is_evaluacion.raw_value">
-
                     <t t-if="record.state_recepcion.raw_value == 'recepcionado'">
-                        <div style="font-size: 12px !important;" class="badge rounded-pill text-bg-warning float-end fs-6 border-0 ">
+                        <div style="font-size: 12px !important;" class="badge rounded-pill text-bg-warning  fs-6 border-0 ">
                             Recepcionado
                         </div>
                     </t>
                     <t t-elif="record.state_recepcion.raw_value == 'entregado'">
-                        <div style="font-size: 12px !important;" class="badge rounded-pill text-bg-success float-end fs-6 border-0">
+                        <div style="font-size: 12px !important;" class="badge rounded-pill text-bg-success  fs-6 border-0">
                             Entregado al Cliente
                         </div>
                     </t>
                     <t t-else="">
-                        <div style="font-size: 12px !important;" class="badge rounded-pill text-bg-danger float-end fs-6 border-0">
+                        <div style="font-size: 12px !important;" class="badge rounded-pill text-bg-danger  fs-6 border-0">
                             Sin recepcionar
                         </div>
                     </t>
