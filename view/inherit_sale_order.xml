@@ -20,6 +20,9 @@
                     <field name="len_mov_repuestos" string="Repuestos" widget="statinfo" />
                 </button>
             </xpath>
+            <xpath expr="//field[@name='order_line']/list/field[@name='name']" position="after">
+                <field name="ots" column_invisible="1"></field>
+            </xpath>
             <xpath expr="//field[@name='partner_shipping_id']" position="after">
                 <field name="is_confirm_repuestos" invisible="1" />
                 <field name="is_confirm_desecho" invisible="1" />
@@ -31,4 +34,18 @@
             </xpath>
         </field>
     </record>
+
+    <record id="form_crm_servicio" model="ir.ui.view">
+        <field name="name">form.crm.servicio.inherit</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='tag_ids']" position="after">
+                <field name="repuestos_ids" invisible="1"/>
+                
+            </xpath>
+        </field>
+    </record>
+
+
 </odoo>

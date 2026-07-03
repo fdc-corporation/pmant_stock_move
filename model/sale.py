@@ -19,7 +19,10 @@ class SaleOrder(models.Model):
                 record.is_confirm_repuestos = record.ots.is_confirm_repuestos
                 record.is_confirm_devolucion = record.ots.vissible_devolucion
                 record.is_confirm_desecho = record.ots.vissible_desecho
-
+            else:
+                record.is_confirm_repuestos = False
+                record.is_confirm_devolucion = False
+                record.is_confirm_desecho = False
     def _compute_len_mov_repuestos(self):
         for record in self:
             if record.id:
@@ -94,6 +97,18 @@ class SaleOrder(models.Model):
             "domain": [("id", "in", desechos.ids)],
         }
 
+    def create_mantenimiento(self):
+        res = super().create_mantenimiento()
+        for record in self:
+            requerimientos = []
+            for line in self.order_line:
+                if line.ots:
+                    self.env["requerimientos.stock"].create({
+                        "tarea_id": self.ots.id,
+                        "product_id": line.product_id.id,
+                        "cantidad": line.product_uom_qty,
+                    })
+            
 
     def action_view_devoluciones(self):
         self.ensure_one()
@@ -111,3 +126,11 @@ class SaleOrder(models.Model):
             "view_mode": "list,form",
             "domain": [("id", "in", devoluciones.ids)],
         }
+
+
+class SaleOrderLine(models.Model):
+    _inherit = "sale.order.line"
+    _description = "Sale Order Line"
+
+
+    ots = fields.Many2one("maintenance.request", string="Orden de trabajo")
