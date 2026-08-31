@@ -25,31 +25,28 @@ class SaleOrder(models.Model):
                 record.is_confirm_desecho = False
     def _compute_len_mov_repuestos(self):
         for record in self:
-            if record.id:
-                requerimientos = self.env["stock.picking"].search(
+            if record.ots:
+                record.len_mov_repuestos = self.env["stock.picking"].search_count(
                     [("tarea_id", "=", record.ots.id), ("is_requerimiento", "=", True)]
                 )
-                record.len_mov_repuestos = len(requerimientos)
             else:
                 record.len_mov_repuestos = 0
 
     def _compute_len_mov_devolucion(self):
         for record in self:
-            if record.id:
-                requerimientos = self.env["stock.picking"].search(
+            if record.ots:
+                record.len_mov_devolucion = self.env["stock.picking"].search_count(
                     [("tarea_id", "=", record.ots.id), ("is_devolucion_repuesto", "=", True)]
                 )
-                record.len_mov_devolucion = len(requerimientos)
             else:
                 record.len_mov_devolucion = 0
 
     def _compute_len_mov_desecho(self):
         for record in self:
-            if record.id:
-                requerimientos = self.env["stock.scrap"].sudo().search(
-                    [("tarea_id", "=", record.id)]
+            if record.ots:
+                record.len_mov_desecho = self.env["stock.scrap"].search_count(
+                    [("tarea_id", "=", record.ots.id)]
                 )
-                record.len_mov_desecho = len(requerimientos)
             else:
                 record.len_mov_desecho = 0
                 
@@ -59,7 +56,7 @@ class SaleOrder(models.Model):
             "name": "Movimientos de repuestos",
             "type": "ir.actions.act_window",
             "res_model": "stock.picking",
-            "view_mode": "tree,form",
+            "view_mode": "list,form",
             "domain": [("tarea_id", "=", self.ots.id), ("is_requerimiento", "=", True)],
         }
         
@@ -100,15 +97,14 @@ class SaleOrder(models.Model):
     def create_mantenimiento(self):
         res = super().create_mantenimiento()
         for record in self:
-            requerimientos = []
-            for line in self.order_line:
+            for line in record.order_line:
                 if line.ots:
                     self.env["requerimientos.stock"].create({
-                        "tarea_id": self.ots.id,
+                        "tarea_id": record.ots.id,
                         "product_id": line.product_id.id,
                         "cantidad": line.product_uom_qty,
                     })
-            
+        return res
 
     def action_view_devoluciones(self):
         self.ensure_one()

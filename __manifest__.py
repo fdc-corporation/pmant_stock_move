@@ -1,6 +1,6 @@
 {
     'name': 'Movimientos y Recepcion de equipos',
-    'version': '1.0',
+    'version': '19.0.2.0.0',
     'category': 'sale',
     'author': 'Kauza Digital',
     'website': 'https://kauzadigital.pe/',

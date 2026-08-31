@@ -71,11 +71,11 @@ class TareaPamnt(models.Model):
                 record.len_mov_desechos = len(requerimientos)
             else:
                 record.len_mov_desechos = 0
-    def create(self, vals):
-        res = super(TareaPamnt, self).create(vals)
-        if "state_recepcion" in vals:
-            res.state_recepcion = "confirm_recepcion"
-        return res
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            vals["state_recepcion"] = "confirm_recepcion"
+        return super().create(vals_list)
 
 
 
@@ -126,7 +126,7 @@ class TareaPamnt(models.Model):
             #     grupo = record.grupo_id
             # record.grupo_id = grupo.id
             ubicaciones = self.env["conf.pmant.ubicacion"].search(
-                [("id", "!=", self.id), ("predeterminado", "=", True)]
+                [("predeterminado", "=", True)], limit=1
             )
             movimientos = self.env["stock.picking"].create(
                 {
@@ -157,7 +157,6 @@ class TareaPamnt(models.Model):
                     "tarea_id": record.id,
                 }
             )
-            n_series = []
             for equipo in record.planequipo:
                 if not equipo.equipo.category_id.product_id:
                     raise UserError(
@@ -184,13 +183,12 @@ class TareaPamnt(models.Model):
                     )
                 else:
                     serie = serie[0]
-                n_series.append(serie.id)
                 self.env["stock.move"].create(
                     {
                         "product_id": equipo.equipo.category_id.product_id.id,
                         "description_picking": f"{equipo.equipo.name} { '- Modelo:' + equipo.equipo.model if equipo.equipo.model else ''  }",
                         "product_uom_qty": 1,
-                        "lot_ids": [(6, 0, n_series)],
+                        "lot_ids": [(6, 0, [serie.id])],
                         "picking_type_id": movimientos.picking_type_id.id,
                         "location_id": movimientos.location_id.id,
                         "location_dest_id": movimientos.location_dest_id.id,
@@ -361,6 +359,7 @@ class TareaPamnt(models.Model):
                         "scrap_reason_tag_ids": [(6, 0, conf.motivo_desecho.ids)],
                     })
                     desecho.action_validate()
+                    req.cant_consumido = 0
             
             
     def action_view_desecho_repuestos(self):
